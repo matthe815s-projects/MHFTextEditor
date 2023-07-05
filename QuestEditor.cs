@@ -22,36 +22,60 @@ namespace MHFQuestEditor
             openFileDialog1.FileName = "";
             openFileDialog1.InitialDirectory = "./";
             DialogResult result = openFileDialog1.ShowDialog();
-            loadQuest(result);
+            processDialog(result);
         }
 
-        private void loadQuest(DialogResult result)
+        private void FillQuestList ()
+        {
+            string[] files = Directory.GetFiles("./");
+
+            foreach (string file in files)
+            {
+                if (!file.EndsWith(".bin")) continue;
+                treeView1.Nodes.Add(file);
+            }
+        }
+
+        private void processDialog (DialogResult result)
         {
             switch (result)
             {
                 case DialogResult.OK:
-                    fileName = openFileDialog1.SafeFileName.Substring(0, openFileDialog1.SafeFileName.Length - 6);
-                    label2.Text = "Quest ID: " + fileName;
-
-                    LoadIfExists(fileName, "d0");
-                    LoadIfExists(fileName, "d1");
-                    LoadIfExists(fileName, "d2");
-                    LoadIfExists(fileName, "n0");
-                    LoadIfExists(fileName, "n1");
-                    LoadIfExists(fileName, "n2");
-
-                    Quest displayQuest = files[0];
-
-                    textBox1.Text = displayQuest.title;
-                    textBox2.Text = displayQuest.mainObjective;
-                    textBox3.Text = displayQuest.subObjective1;
-                    textBox4.Text = displayQuest.subObjective2;
-                    textBox5.Text = displayQuest.clearConditions;
-                    textBox6.Text = displayQuest.failureConditions;
-                    textBox7.Text = displayQuest.questContractor;
-                    textBox8.Text = displayQuest.questDescription;
+                    loadQuest(openFileDialog1.FileName);
                     break;
             }
+        }
+
+        private void loadQuest (string fileName)
+        {
+            files = new List<Quest>();
+            fileName = fileName.Substring(0, fileName.Length - 6);
+
+            MessageBox.Show(String.Format("{0} loaded successfully!", fileName));
+
+            LoadIfExists(fileName, "d0");
+            LoadIfExists(fileName, "d1");
+            LoadIfExists(fileName, "d2");
+            LoadIfExists(fileName, "n0");
+            LoadIfExists(fileName, "n1");
+            LoadIfExists(fileName, "n2");
+
+            if (fileName.Length > 5) fileName = fileName.Substring(fileName.Length - 5);
+            label2.Text = "Quest ID: " + fileName;
+            this.Text = string.Format("Editing: {0}", fileName);
+
+            Quest displayQuest = files[0];
+
+            textBox1.Text = displayQuest.title;
+            textBox2.Text = displayQuest.mainObjective;
+            textBox3.Text = displayQuest.subObjective1;
+            textBox4.Text = displayQuest.subObjective2;
+            textBox5.Text = displayQuest.clearConditions;
+            textBox6.Text = displayQuest.failureConditions;
+            textBox7.Text = displayQuest.questContractor;
+            textBox8.Text = displayQuest.questDescription;
+
+            button3.Enabled = true;
         }
 
         private void LoadIfExists(string questId, string meta)
@@ -62,7 +86,7 @@ namespace MHFQuestEditor
             }
         }
 
-        void RewriteFile()
+        void RewriteFile ()
         {
             files.ForEach(quest =>
             {
@@ -131,6 +155,41 @@ namespace MHFQuestEditor
         private void button2_Click(object sender, EventArgs e)
         {
             RewriteFile();
+        }
+
+        private void QuestSelector_Load(object sender, EventArgs e)
+        {
+            FillQuestList();
+        }
+
+        private void treeView1_Click(object sender, EventArgs e)
+        {
+            TreeViewHitTestInfo info = treeView1.HitTest(treeView1.PointToClient(Cursor.Position));
+            if (info != null)
+                loadQuest(info.Node.Text.Substring(2));
+        }
+
+        private void textBox8_KeyPress(object sender, KeyEventArgs e)
+        {
+            int lineCount = textBox8.Lines.Length;
+            int currentLine = textBox8.GetLineFromCharIndex(textBox8.SelectionStart);
+            int charCount = textBox8.Lines[currentLine].Length;
+
+            label12.Text = string.Format("{0}/{1}", charCount.ToString(), 25);
+            label11.Text = string.Format("{0}/{1}", lineCount.ToString(), 7);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            files[0].title = textBox1.Text;
+            files[0].mainObjective = textBox2.Text;
+            files[0].subObjective1 = textBox3.Text;
+            files[0].subObjective2 = textBox4.Text;
+            files[0].clearConditions = textBox5.Text;
+            files[0].failureConditions = textBox6.Text;
+            files[0].questContractor = textBox7.Text;
+            files[0].questDescription = textBox8.Text;
+            new Preview(files[0]).Show();
         }
     }
 }
