@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MHFQuestEditor.JPK;
 
 namespace MHFQuestEditor
 {
@@ -19,31 +15,53 @@ namespace MHFQuestEditor
         public string questContractor = "";
         public string questDescription = "";
 
+        public string extraText = "";
+
+        private MemoryStream decryptedData;
         public byte[] questCode = new byte[0];
 
+        public Quest(string questId, string meta)
+        {
+            Stream questData = LoadFileAndInitializeData(questId, meta);
+            DecryptData(questData);
+            LocatePointersAndReadBody();
+            ReadQuestStrings();
+            questData.Close();
+        }
 
-        public void Load (string questId, string meta)
+        Stream LoadFileAndInitializeData (string questId, string meta)
         {
             Stream file = File.Open(string.Format("{0}{1}.bin", questId, meta), FileMode.Open);
             fileName = string.Format("{0}{1}.bin", questId, meta);
+            return file;
+        }
 
+        void DecryptData (Stream file)
+        {
             byte[] data = new byte[file.Length];
             file.Read(data, 0, data.Length);
 
             data = new JPKDecoder().UnpackSimple(data);
-            MemoryStream decryptedData = new MemoryStream(data);
+            decryptedData = new MemoryStream(data);
+        }
 
+        void LocatePointersAndReadBody ()
+        {
             int mainPropsPointer = decryptedData.ReadByte();
             decryptedData.Seek(mainPropsPointer, SeekOrigin.Begin);
             decryptedData.Seek(40, SeekOrigin.Current);
+
             byte[] stringPointer = new byte[4];
             decryptedData.Read(stringPointer, 0, 4);
+
+            // Seek to zero and read all the way to the string pointer - this will be copied one to one.
             decryptedData.Seek(0, SeekOrigin.Begin);
-
             questCode = new byte[BitConverter.ToInt32(stringPointer)];
-
             decryptedData.Read(questCode, 0, BitConverter.ToInt32(stringPointer));
+        }
 
+        void ReadQuestStrings ()
+        {
             byte[] titlePointer = new byte[4];
             decryptedData.Read(titlePointer, 0, 4);
             byte[] mainObjectivePointer = new byte[4];
@@ -61,39 +79,40 @@ namespace MHFQuestEditor
             byte[] questDescriptionPointer = new byte[4];
             decryptedData.Read(questDescriptionPointer, 0, 4);
 
-            decryptedData.Seek(BitConverter.ToInt32(titlePointer), SeekOrigin.Begin);
+            // Extra text specific to the file
+            extraText = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest title
+            decryptedData.Seek(BitConverter.ToInt32(titlePointer), SeekOrigin.Begin);
             title = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest main
             decryptedData.Seek(BitConverter.ToInt32(mainObjectivePointer), SeekOrigin.Begin);
-
             mainObjective = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest subobjective 1
             decryptedData.Seek(BitConverter.ToInt32(subObjectiveAPointer), SeekOrigin.Begin);
-
             subObjective1 = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest subobjective 2
             decryptedData.Seek(BitConverter.ToInt32(subObjectiveBPointer), SeekOrigin.Begin);
-
             subObjective2 = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest clear conditions
             decryptedData.Seek(BitConverter.ToInt32(clearConditionsPointer), SeekOrigin.Begin);
-
             clearConditions = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest failure conditions
             decryptedData.Seek(BitConverter.ToInt32(failConditionsPointer), SeekOrigin.Begin);
-
             failureConditions = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest contractor
             decryptedData.Seek(BitConverter.ToInt32(questContractorPointer), SeekOrigin.Begin);
-
             questContractor = QuestSelector.ReadNullTerminated(decryptedData);
 
+            // Quest description
             decryptedData.Seek(BitConverter.ToInt32(questDescriptionPointer), SeekOrigin.Begin);
-
             questDescription = QuestSelector.ReadNullTerminated(decryptedData);
-
-            file.Close();
         }
     }
 }

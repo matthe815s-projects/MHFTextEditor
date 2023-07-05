@@ -5,7 +5,7 @@ namespace MHFQuestEditor
 {
     public partial class QuestSelector : Form
     {
-        string fileName;
+        string fileName = "";
         List<Quest> files = new List<Quest>();
 
         public QuestSelector()
@@ -57,33 +57,30 @@ namespace MHFQuestEditor
         {
             if (File.Exists(string.Format("{0}{1}.bin", questId, meta)))
             {
-                Quest quest = new Quest();
-                quest.Load(questId, meta);
-                files.Add(quest);
+                files.Add(new Quest(questId, meta));
             }
         }
 
         public static string ReadNullTerminated(Stream file)
         {
             StreamReader reader = new StreamReader(file, Encoding.GetEncoding(932));
-            var bldr = new System.Text.StringBuilder();
+            var stringBuilder = new StringBuilder();
 
-            int nc;
-            while ((nc = reader.Read()) > 0)
+            int nextChar;
+            while ((nextChar = reader.Read()) > 0)
             {
-                Console.WriteLine(nc);
-                if ((byte)nc == 10)
+                switch ((byte)nextChar)
                 {
-                    Console.WriteLine("New line");
-                    bldr.AppendLine("\n");
-                }
-                else
-                {
-                    bldr.Append((char)nc);
+                    case 10:
+                        stringBuilder.AppendLine("\n");
+                        break;
+                    default:
+                        stringBuilder.Append((char)nextChar);
+                        break;
                 }
             }
 
-            return bldr.ToString();
+            return stringBuilder.ToString();
         }
 
         string ReformatString(string text)
@@ -96,14 +93,13 @@ namespace MHFQuestEditor
 
         void RewriteFile()
         {
-
-            files.ForEach(f =>
+            files.ForEach(quest =>
             {
-                BinaryWriter writer = new BinaryWriter(File.Open(f.fileName + ".backup", FileMode.Create), Encoding.GetEncoding(932));
+                BinaryWriter writer = new BinaryWriter(File.Open(quest.fileName + ".backup", FileMode.Create), Encoding.GetEncoding(932));
 
-                writer.Write(f.questCode);
+                writer.Write(quest.questCode);
 
-                var pointerStarter = f.questCode.Length + 32 + 28;
+                var pointerStarter = quest.questCode.Length + 32 + 28;
 
                 var title = ReformatString(textBox1.Text);
                 var main = ReformatString(textBox2.Text);
@@ -132,7 +128,7 @@ namespace MHFQuestEditor
                 //writer.Write(originalStrings);
                 //writer.Write(0x69);
 
-                writer.Write("依頼の品を全て納品しました");
+                writer.Write(quest.extraText);
                 writer.Write((byte)0x00);
                 writer.Write(Encoding.GetEncoding(932).GetBytes(title));
                 writer.Write((byte)0x00);
@@ -160,7 +156,7 @@ namespace MHFQuestEditor
 
                 writer.Close();
 
-                new JPKEncoder().JPKEncode(data, 3, f.fileName, 100);
+                new JPKEncoder().JPKEncode(data, 3, quest.fileName, 100);
             });
         }
 
