@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /**
  * Huge credit to https://github.com/Chakratos/ReFrontier/blob/master/ReFrontier/jpk/JPKDecodeLz.cs for the initial code base to work with in regards to JPK encoding.
  */
-namespace MHFQuestEditor
+namespace MHFQuestEditor.JPK
 {
     class JPKEncoder
     {
@@ -21,16 +21,16 @@ namespace MHFQuestEditor
         public byte[] m_towrite = new byte[1000];
         public int m_itowrite;
 
-        public void JPKEncode(byte[] data, UInt16 atype, string otPath, int level)
+        public void JPKEncode(byte[] data, ushort atype, string otPath, int level)
         {
-            UInt16 type = atype;
+            ushort type = atype;
             byte[] buffer = data;
             int insize = buffer.Length;
             if (File.Exists(otPath)) File.Delete(otPath);
             FileStream fsot = File.Create(otPath);
             BinaryWriter br = new BinaryWriter(fsot);
-            UInt32 u32 = 0x1A524B4A;
-            UInt16 u16 = 0x108;
+            uint u32 = 0x1A524B4A;
+            ushort u16 = 0x108;
             br.Write(u32);
             br.Write(u16);
             br.Write(type);
@@ -102,7 +102,7 @@ namespace MHFQuestEditor
         {
             for (int i = cnt - 1; i >= 0; i--)
             {
-                SetFlag((byte)((b >> i) & 1));
+                SetFlag((byte)(b >> i & 1));
             }
         }
         public void ProcessOnEncode(byte[] inBuffer, Stream outStream, int level = 1000)
@@ -120,7 +120,7 @@ namespace MHFQuestEditor
             m_ind = 0;
             while (m_ind < inBuffer.Length)
             {
-                perc = percbord + (100 - percbord) * (Int64)m_ind / inBuffer.Length;
+                perc = percbord + (100 - percbord) * m_ind / inBuffer.Length;
                 if (perc > perc0)
                 {
                     perc0 = perc;
@@ -140,16 +140,16 @@ namespace MHFQuestEditor
                     if (len <= 6 && ofs <= 0xff)
                     {
                         SetFlag(0);
-                        SetFlagsL((byte)((len - 3)), 2);
+                        SetFlagsL((byte)(len - 3), 2);
                         m_towrite[m_itowrite++] = (byte)ofs;
                         m_ind += len;
                     }
                     else
                     {
                         SetFlag(1);
-                        UInt16 u16 = (UInt16)ofs;
+                        ushort u16 = (ushort)ofs;
                         byte hi, lo;
-                        if (len <= 9) u16 |= (UInt16)((len - 2) << 13);
+                        if (len <= 9) u16 |= (ushort)(len - 2 << 13);
                         hi = (byte)(u16 >> 8);
                         lo = (byte)(u16 & 0xff);
                         m_towrite[m_itowrite++] = hi;
@@ -160,7 +160,7 @@ namespace MHFQuestEditor
                             if (len <= 25)
                             {
                                 SetFlag(0);
-                                SetFlagsL((byte)((len - 10)), 4);
+                                SetFlagsL((byte)(len - 10), 4);
                             }
                             else
                             {

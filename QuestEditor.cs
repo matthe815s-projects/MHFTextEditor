@@ -1,12 +1,12 @@
 using System.Text;
+using MHFQuestEditor.JPK;
+using MHFQuestEditor.Utils;
 
 namespace MHFQuestEditor
 {
     public partial class QuestSelector : Form
     {
-        byte[] originalStrings;
-        string fileName;
-
+        string fileName = "";
         List<Quest> files = new List<Quest>();
 
         public QuestSelector()
@@ -58,87 +58,28 @@ namespace MHFQuestEditor
         {
             if (File.Exists(string.Format("{0}{1}.bin", questId, meta)))
             {
-                Quest quest = new Quest();
-                quest.Load(questId, meta);
-                files.Add(quest);
+                files.Add(new Quest(questId, meta));
             }
-        }
-
-        byte[] ReadOriginal(StreamReader rdr)
-        {
-            byte[] bytes = new byte[rdr.BaseStream.Length - rdr.BaseStream.Position];
-            int length = 0;
-            int nc;
-
-            while ((nc = rdr.Read()) != 0x01 && rdr.BaseStream.Position < rdr.BaseStream.Length)
-            {
-                length++;
-            }
-
-            byte[] final = new byte[length];
-            CopyOriginal(bytes, final);
-
-            return final;
-        }
-
-        void CopyOriginal(byte[] old, byte[] notold)
-        {
-            for (int i = 0; i < notold.Length; i++)
-            {
-                notold[i] = old[i];
-            }
-        }
-
-        public static string ReadNullTerminated(Stream file)
-        {
-            StreamReader reader = new StreamReader(file, Encoding.GetEncoding(932));
-            var bldr = new System.Text.StringBuilder();
-
-            int nc;
-            while ((nc = reader.Read()) > 0)
-            {
-                Console.WriteLine(nc);
-                if ((byte)nc == 10)
-                {
-                    Console.WriteLine("New line");
-                    bldr.AppendLine("\n");
-                }
-                else
-                {
-                    bldr.Append((char)nc);
-                }
-            }
-
-            return bldr.ToString();
-        }
-
-        string ReformatString(string text)
-        {
-            text = text.Replace("\n\r\n", "\n");
-            text = text.Replace("\r\n", "\n");
-            text = text.Replace("", "");
-            return text;
         }
 
         void RewriteFile()
         {
-
-            files.ForEach(f =>
+            files.ForEach(quest =>
             {
-                BinaryWriter writer = new BinaryWriter(File.Open(f.fileName + ".backup", FileMode.Create), Encoding.GetEncoding(932));
+                BinaryWriter writer = new BinaryWriter(File.Open(quest.fileName + ".backup", FileMode.Create), Encoding.GetEncoding(932));
 
-                writer.Write(f.questCode);
+                writer.Write(quest.questCode);
 
-                var pointerStarter = f.questCode.Length + 32 + 28;
+                var pointerStarter = quest.questCode.Length + 32 + 28;
 
-                var title = ReformatString(textBox1.Text);
-                var main = ReformatString(textBox2.Text);
-                var sub1 = ReformatString(textBox3.Text);
-                var sub2 = ReformatString(textBox4.Text);
-                var clear = ReformatString(textBox5.Text);
-                var fail = ReformatString(textBox6.Text);
-                var giver = ReformatString(textBox7.Text);
-                var descrip = ReformatString(textBox8.Text);
+                var title   = Utility.ReformatString(textBox1.Text);
+                var main    = Utility.ReformatString(textBox2.Text);
+                var sub1    = Utility.ReformatString(textBox3.Text);
+                var sub2    = Utility.ReformatString(textBox4.Text);
+                var clear   = Utility.ReformatString(textBox5.Text);
+                var fail    = Utility.ReformatString(textBox6.Text);
+                var giver   = Utility.ReformatString(textBox7.Text);
+                var descrip = Utility.ReformatString(textBox8.Text);
 
                 writer.Write((Int32)pointerStarter);
                 writer.Write((Int32)pointerStarter + Encoding.GetEncoding(932).GetBytes(title).Length + 1);
@@ -154,9 +95,6 @@ namespace MHFQuestEditor
                 writer.Write((Int32)pointerStarter + Encoding.GetEncoding(932).GetBytes(title).Length + Encoding.GetEncoding(932).GetBytes(main).Length
                     + Encoding.GetEncoding(932).GetBytes(sub1).Length + Encoding.GetEncoding(932).GetBytes(sub2).Length + Encoding.GetEncoding(932).GetBytes(clear).Length + Encoding.GetEncoding(932).GetBytes(fail).Length
                     + Encoding.GetEncoding(932).GetBytes(giver).Length + 7);
-
-                //writer.Write(originalStrings);
-                //writer.Write(0x69);
 
                 writer.Write("依頼の品を全て納品しました");
                 writer.Write((byte)0x00);
@@ -186,7 +124,7 @@ namespace MHFQuestEditor
 
                 writer.Close();
 
-                new JPKEncoder().JPKEncode(data, 3, f.fileName, 100);
+                new JPKEncoder().JPKEncode(data, 3, quest.fileName, 100);
             });
         }
 
