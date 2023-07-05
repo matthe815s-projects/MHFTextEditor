@@ -1,5 +1,6 @@
 using System.Text;
 using MHFQuestEditor.JPK;
+using MHFQuestEditor.Utils;
 
 namespace MHFQuestEditor
 {
@@ -61,36 +62,6 @@ namespace MHFQuestEditor
             }
         }
 
-        public static string ReadNullTerminated(Stream file)
-        {
-            StreamReader reader = new StreamReader(file, Encoding.GetEncoding(932));
-            var stringBuilder = new StringBuilder();
-
-            int nextChar;
-            while ((nextChar = reader.Read()) > 0)
-            {
-                switch ((byte)nextChar)
-                {
-                    case 10:
-                        stringBuilder.AppendLine("\n");
-                        break;
-                    default:
-                        stringBuilder.Append((char)nextChar);
-                        break;
-                }
-            }
-
-            return stringBuilder.ToString();
-        }
-
-        string ReformatString(string text)
-        {
-            text = text.Replace("\n\r\n", "\n");
-            text = text.Replace("\r\n", "\n");
-            text = text.Replace("", "");
-            return text;
-        }
-
         void RewriteFile()
         {
             files.ForEach(quest =>
@@ -101,14 +72,14 @@ namespace MHFQuestEditor
 
                 var pointerStarter = quest.questCode.Length + 32 + 28;
 
-                var title = ReformatString(textBox1.Text);
-                var main = ReformatString(textBox2.Text);
-                var sub1 = ReformatString(textBox3.Text);
-                var sub2 = ReformatString(textBox4.Text);
-                var clear = ReformatString(textBox5.Text);
-                var fail = ReformatString(textBox6.Text);
-                var giver = ReformatString(textBox7.Text);
-                var descrip = ReformatString(textBox8.Text);
+                var title   = Utility.ReformatString(textBox1.Text);
+                var main    = Utility.ReformatString(textBox2.Text);
+                var sub1    = Utility.ReformatString(textBox3.Text);
+                var sub2    = Utility.ReformatString(textBox4.Text);
+                var clear   = Utility.ReformatString(textBox5.Text);
+                var fail    = Utility.ReformatString(textBox6.Text);
+                var giver   = Utility.ReformatString(textBox7.Text);
+                var descrip = Utility.ReformatString(textBox8.Text);
 
                 writer.Write((Int32)pointerStarter);
                 writer.Write((Int32)pointerStarter + Encoding.GetEncoding(932).GetBytes(title).Length + 1);
@@ -125,10 +96,7 @@ namespace MHFQuestEditor
                     + Encoding.GetEncoding(932).GetBytes(sub1).Length + Encoding.GetEncoding(932).GetBytes(sub2).Length + Encoding.GetEncoding(932).GetBytes(clear).Length + Encoding.GetEncoding(932).GetBytes(fail).Length
                     + Encoding.GetEncoding(932).GetBytes(giver).Length + 7);
 
-                //writer.Write(originalStrings);
-                //writer.Write(0x69);
-
-                writer.Write(quest.extraText);
+                writer.Write("依頼の品を全て納品しました");
                 writer.Write((byte)0x00);
                 writer.Write(Encoding.GetEncoding(932).GetBytes(title));
                 writer.Write((byte)0x00);

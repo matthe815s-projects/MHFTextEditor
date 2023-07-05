@@ -1,4 +1,5 @@
 ﻿using MHFQuestEditor.JPK;
+using MHFQuestEditor.Utils;
 
 namespace MHFQuestEditor
 {
@@ -20,7 +21,7 @@ namespace MHFQuestEditor
         private MemoryStream decryptedData;
         public byte[] questCode = new byte[0];
 
-        public Quest(string questId, string meta)
+        public Quest (string questId, string meta)
         {
             Stream questData = LoadFileAndInitializeData(questId, meta);
             DecryptData(questData);
@@ -79,40 +80,37 @@ namespace MHFQuestEditor
             byte[] questDescriptionPointer = new byte[4];
             decryptedData.Read(questDescriptionPointer, 0, 4);
 
-            // Extra text specific to the file
-            extraText = QuestSelector.ReadNullTerminated(decryptedData);
-
             // Quest title
             decryptedData.Seek(BitConverter.ToInt32(titlePointer), SeekOrigin.Begin);
-            title = QuestSelector.ReadNullTerminated(decryptedData);
+            title = Utility.ReadNullTerminated(decryptedData);
 
             // Quest main
             decryptedData.Seek(BitConverter.ToInt32(mainObjectivePointer), SeekOrigin.Begin);
-            mainObjective = QuestSelector.ReadNullTerminated(decryptedData);
+            mainObjective = Utility.ReadNullTerminated(decryptedData);
 
             // Quest subobjective 1
             decryptedData.Seek(BitConverter.ToInt32(subObjectiveAPointer), SeekOrigin.Begin);
-            subObjective1 = QuestSelector.ReadNullTerminated(decryptedData);
+            subObjective1 = Utility.ReadNullTerminated(decryptedData);
 
             // Quest subobjective 2
             decryptedData.Seek(BitConverter.ToInt32(subObjectiveBPointer), SeekOrigin.Begin);
-            subObjective2 = QuestSelector.ReadNullTerminated(decryptedData);
+            subObjective2 = Utility.ReadNullTerminated(decryptedData);
 
             // Quest clear conditions
             decryptedData.Seek(BitConverter.ToInt32(clearConditionsPointer), SeekOrigin.Begin);
-            clearConditions = QuestSelector.ReadNullTerminated(decryptedData);
+            clearConditions = Utility.ReadNullTerminated(decryptedData);
 
             // Quest failure conditions
             decryptedData.Seek(BitConverter.ToInt32(failConditionsPointer), SeekOrigin.Begin);
-            failureConditions = QuestSelector.ReadNullTerminated(decryptedData);
+            failureConditions = Utility.ReadNullTerminated(decryptedData);
 
             // Quest contractor
             decryptedData.Seek(BitConverter.ToInt32(questContractorPointer), SeekOrigin.Begin);
-            questContractor = QuestSelector.ReadNullTerminated(decryptedData);
+            questContractor = Utility.ReadNullTerminated(decryptedData);
 
             // Quest description
             decryptedData.Seek(BitConverter.ToInt32(questDescriptionPointer), SeekOrigin.Begin);
-            questDescription = QuestSelector.ReadNullTerminated(decryptedData);
+            questDescription = Utility.ReadNullTerminated(decryptedData);
         }
     }
 }
