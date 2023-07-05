@@ -74,6 +74,8 @@ namespace MHFQuestEditor
             textBox6.Text = displayQuest.failureConditions;
             textBox7.Text = displayQuest.questContractor;
             textBox8.Text = displayQuest.questDescription;
+
+            button3.Enabled = true;
         }
 
         private void LoadIfExists(string questId, string meta)
