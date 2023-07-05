@@ -6,6 +6,7 @@ namespace MHFQuestEditor
     public class Quest
     {
         public string fileName = "";
+        public string safeName = "";
 
         public string title = "";
         public string mainObjective = "";
@@ -23,6 +24,8 @@ namespace MHFQuestEditor
 
         public Quest (string questId, string meta)
         {
+            this.safeName = string.Format("{0}{1}", questId.Substring(questId.Length-5), meta);
+
             Stream questData = LoadFileAndInitializeData(questId, meta);
             DecryptData(questData);
             LocatePointersAndReadBody();
