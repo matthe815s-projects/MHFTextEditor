@@ -41,7 +41,7 @@ namespace MHFQuestEditor
             switch (result)
             {
                 case DialogResult.OK:
-                    loadQuest(openFileDialog1.SafeFileName);
+                    loadQuest(openFileDialog1.FileName);
                     break;
             }
         }
@@ -51,6 +51,8 @@ namespace MHFQuestEditor
             files = new List<Quest>();
             fileName = fileName.Substring(0, fileName.Length - 6);
             label2.Text = "Quest ID: " + fileName;
+
+            MessageBox.Show(String.Format("{0} loaded successfully!", fileName));
 
             LoadIfExists(fileName, "d0");
             LoadIfExists(fileName, "d1");
