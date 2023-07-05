@@ -88,7 +88,8 @@ namespace MHFQuestEditor
 
         string ReformatString(string text)
         {
-            text = text.Replace("\r\n", "");
+            text = text.Replace("\n\r\n", "\n");
+            text = text.Replace("\r\n", "\n");
             text = text.Replace("", "");
             return text;
         }
