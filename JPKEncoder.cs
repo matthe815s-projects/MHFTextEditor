@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/**
+ * Huge credit to https://github.com/Chakratos/ReFrontier/blob/master/ReFrontier/jpk/JPKDecodeLz.cs for the initial code base to work with in regards to JPK encoding.
+ */
 namespace MHFQuestEditor
 {
     class JPKEncoder
