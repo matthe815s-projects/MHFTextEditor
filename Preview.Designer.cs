@@ -218,6 +218,7 @@
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Preview";
             this.Text = "Preview";
             this.Load += new System.EventHandler(this.Preview_Load);

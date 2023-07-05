@@ -32,6 +32,8 @@ namespace MHFQuestEditor
             label8.Text = Preview.questReference.failureConditions;
             label9.Text = Preview.questReference.subObjective1;
             label10.Text = Preview.questReference.subObjective2;
+
+            this.Text = String.Format("Previewing: {0}", questReference.title);
         }
     }
 }
