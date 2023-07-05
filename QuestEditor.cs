@@ -185,8 +185,7 @@ namespace MHFQuestEditor
 
                 writer.Close();
 
-                JPKEncoder.JPKEncode(data, 3, f.fileName, 10);
-
+                new JPKEncoder().JPKEncode(data, 3, f.fileName, 100);
             });
         }
 

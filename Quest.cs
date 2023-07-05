@@ -30,7 +30,7 @@ namespace MHFQuestEditor
             byte[] data = new byte[file.Length];
             file.Read(data, 0, data.Length);
 
-            data = JPKDecoder.UnpackSimple(data);
+            data = new JPKDecoder().UnpackSimple(data);
             MemoryStream decryptedData = new MemoryStream(data);
 
             int mainPropsPointer = decryptedData.ReadByte();

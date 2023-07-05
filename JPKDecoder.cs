@@ -8,10 +8,10 @@ namespace MHFQuestEditor
 {
     class JPKDecoder
     {
-        public static int m_shiftIndex = 0;
-        public static byte m_flag = 0;
+        public int m_shiftIndex = 0;
+        public byte m_flag = 0;
 
-        public static byte[] UnpackSimple(byte[] data)
+        public byte[] UnpackSimple(byte[] data)
         {
             MemoryStream msInput = new MemoryStream(data);
             BinaryReader brInput = new BinaryReader(msInput);
@@ -36,7 +36,7 @@ namespace MHFQuestEditor
             return data;
         }
 
-        public static void jpkcpy_lz(byte[] outBuffer, int offset, int length, ref int index)
+        public void jpkcpy_lz(byte[] outBuffer, int offset, int length, ref int index)
         {
             for (int i = 0; i < length; i++, index++)
             {
@@ -44,7 +44,7 @@ namespace MHFQuestEditor
             }
         }
 
-        public static byte jpkbit_lz(Stream s)
+        public byte jpkbit_lz(Stream s)
         {
             m_shiftIndex--;
             if (m_shiftIndex < 0)
@@ -56,7 +56,7 @@ namespace MHFQuestEditor
             return (byte)((m_flag >> m_shiftIndex) & 1);
         }
 
-        public static void ProcessOnDecode(Stream inStream, byte[] outBuffer)//implements jpkdec_lz
+        public void ProcessOnDecode(Stream inStream, byte[] outBuffer)//implements jpkdec_lz
         {
             int outIndex = 0;
             while (inStream.Position < inStream.Length && outIndex < outBuffer.Length)
@@ -120,7 +120,7 @@ namespace MHFQuestEditor
             }
         }
 
-        public static byte ReadByte(Stream s)
+        public byte ReadByte(Stream s)
         {
             int value = s.ReadByte();
             if (value < 0)

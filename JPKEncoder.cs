@@ -8,20 +8,18 @@ namespace MHFQuestEditor
 {
     class JPKEncoder
     {
-        public static byte m_flag;
-        public static int m_shiftIndex;
-        public static int m_ind;
-        public static byte[] m_inp;
-        public static int m_level = 280;
-        public static int m_maxdist = 0x300;//0x1fff;
-        public static Stream m_outstream;
-        public static byte[] m_towrite = new byte[1000];
-        public static int m_itowrite;
+        public byte m_flag;
+        public int m_shiftIndex;
+        public int m_ind;
+        public byte[] m_inp;
+        public int m_level = 280;
+        public int m_maxdist = 0x300;//0x1fff;
+        public Stream m_outstream;
+        public byte[] m_towrite = new byte[1000];
+        public int m_itowrite;
 
-        public static void JPKEncode(byte[] data, UInt16 atype, string otPath, int level)
+        public void JPKEncode(byte[] data, UInt16 atype, string otPath, int level)
         {
-            Directory.CreateDirectory("output");
-
             UInt16 type = atype;
             byte[] buffer = data;
             int insize = buffer.Length;
@@ -44,7 +42,7 @@ namespace MHFQuestEditor
             fsot.Close();
         }
 
-        public static unsafe int FindRep(int ind, out uint ofs)
+        public unsafe int FindRep(int ind, out uint ofs)
         {
             int nlen = Math.Min(m_level, m_inp.Length - ind);
             ofs = 0;
@@ -78,7 +76,7 @@ namespace MHFQuestEditor
                 return len;
             }
         }
-        public static void flushflag(bool final)
+        public void flushflag(bool final)
         {
             if (!final || m_itowrite > 0)
                 WriteByte(m_outstream, m_flag);
@@ -87,7 +85,7 @@ namespace MHFQuestEditor
                 WriteByte(m_outstream, m_towrite[i]);
             m_itowrite = 0;
         }
-        public static void SetFlag(byte b)
+        public void SetFlag(byte b)
         {
             m_shiftIndex--;
             if (m_shiftIndex < 0)
@@ -97,14 +95,14 @@ namespace MHFQuestEditor
             }
             m_flag |= (byte)(b << m_shiftIndex);
         }
-        public static void SetFlagsL(byte b, int cnt)
+        public void SetFlagsL(byte b, int cnt)
         {
             for (int i = cnt - 1; i >= 0; i--)
             {
                 SetFlag((byte)((b >> i) & 1));
             }
         }
-        public static void ProcessOnEncode(byte[] inBuffer, Stream outStream, int level = 1000)
+        public void ProcessOnEncode(byte[] inBuffer, Stream outStream, int level = 1000)
         {
             long perc, perc0 = 0;
             long percbord = 0;
@@ -172,7 +170,7 @@ namespace MHFQuestEditor
             }
             flushflag(true);
         }
-        public static void WriteByte(Stream s, byte b)
+        public void WriteByte(Stream s, byte b)
         {
             s.WriteByte(b);
         }
