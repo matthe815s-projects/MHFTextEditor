@@ -176,5 +176,10 @@ namespace MHFQuestEditor
             label12.Text = string.Format("{0}/{1}", charCount.ToString(), 25);
             label11.Text = string.Format("{0}/{1}", lineCount.ToString(), 7);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            new Preview().Show();
+        }
     }
 }

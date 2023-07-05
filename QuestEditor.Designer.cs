@@ -53,6 +53,7 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -261,11 +262,22 @@
             this.label12.TabIndex = 23;
             this.label12.Text = "0/15";
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(111, 483);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(384, 23);
+            this.button3.TabIndex = 24;
+            this.button3.Text = "Preview";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // QuestSelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(828, 542);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.treeView1);
@@ -325,5 +337,6 @@
         private TreeView treeView1;
         private Label label11;
         private Label label12;
+        private Button button3;
     }
 }
