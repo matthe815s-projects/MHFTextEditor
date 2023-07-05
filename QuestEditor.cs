@@ -1,12 +1,11 @@
 using System.Text;
+using MHFQuestEditor.JPK;
 
 namespace MHFQuestEditor
 {
     public partial class QuestSelector : Form
     {
-        byte[] originalStrings;
         string fileName;
-
         List<Quest> files = new List<Quest>();
 
         public QuestSelector()
@@ -61,31 +60,6 @@ namespace MHFQuestEditor
                 Quest quest = new Quest();
                 quest.Load(questId, meta);
                 files.Add(quest);
-            }
-        }
-
-        byte[] ReadOriginal(StreamReader rdr)
-        {
-            byte[] bytes = new byte[rdr.BaseStream.Length - rdr.BaseStream.Position];
-            int length = 0;
-            int nc;
-
-            while ((nc = rdr.Read()) != 0x01 && rdr.BaseStream.Position < rdr.BaseStream.Length)
-            {
-                length++;
-            }
-
-            byte[] final = new byte[length];
-            CopyOriginal(bytes, final);
-
-            return final;
-        }
-
-        void CopyOriginal(byte[] old, byte[] notold)
-        {
-            for (int i = 0; i < notold.Length; i++)
-            {
-                notold[i] = old[i];
             }
         }
 

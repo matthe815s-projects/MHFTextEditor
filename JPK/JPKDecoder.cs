@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /**
  * Huge credit to https://github.com/Chakratos/ReFrontier/blob/master/ReFrontier/jpk/JPKDecodeLz.cs for the initial code base to work with in regards to JPK encoding.
  */
-namespace MHFQuestEditor
+namespace MHFQuestEditor.JPK
 {
     class JPKDecoder
     {
@@ -56,7 +56,7 @@ namespace MHFQuestEditor
                 //Debug.WriteLine("flag read from {0:X8}", s.Position);
                 m_flag = ReadByte(s);
             }
-            return (byte)((m_flag >> m_shiftIndex) & 1);
+            return (byte)(m_flag >> m_shiftIndex & 1);
         }
 
         public void ProcessOnDecode(Stream inStream, byte[] outBuffer)//implements jpkdec_lz
@@ -74,7 +74,7 @@ namespace MHFQuestEditor
                     if (jpkbit_lz(inStream) == 0)
                     {
                         //Debug.WriteLine("case 0");
-                        byte len = (byte)((jpkbit_lz(inStream) << 1) | jpkbit_lz(inStream));
+                        byte len = (byte)(jpkbit_lz(inStream) << 1 | jpkbit_lz(inStream));
                         byte off = ReadByte(inStream);
                         jpkcpy_lz(outBuffer, off, len + 3, ref outIndex);
                         continue;
@@ -85,7 +85,7 @@ namespace MHFQuestEditor
                         byte hi = ReadByte(inStream);
                         byte lo = ReadByte(inStream);
                         int len = (hi & 0xE0) >> 5;
-                        int off = ((hi & 0x1F) << 8) | lo;
+                        int off = (hi & 0x1F) << 8 | lo;
                         if (len != 0)
                         {
                             //Debug.WriteLine("case 1");
@@ -97,7 +97,7 @@ namespace MHFQuestEditor
                             if (jpkbit_lz(inStream) == 0)
                             {
                                 //Debug.WriteLine("case 2");
-                                len = (byte)((jpkbit_lz(inStream) << 3) | (jpkbit_lz(inStream) << 2) | (jpkbit_lz(inStream) << 1) | jpkbit_lz(inStream));
+                                len = (byte)(jpkbit_lz(inStream) << 3 | jpkbit_lz(inStream) << 2 | jpkbit_lz(inStream) << 1 | jpkbit_lz(inStream));
                                 jpkcpy_lz(outBuffer, off, len + 2 + 8, ref outIndex);
                                 continue;
                             }
