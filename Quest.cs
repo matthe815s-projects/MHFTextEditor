@@ -6,6 +6,7 @@ namespace MHFQuestEditor
     public class Quest
     {
         public string fileName = "";
+        public string safeName = "";
 
         public string title = "";
         public string mainObjective = "";
@@ -18,11 +19,13 @@ namespace MHFQuestEditor
 
         public string extraText = "";
 
-        private MemoryStream decryptedData;
+        private MemoryStream? decryptedData;
         public byte[] questCode = new byte[0];
 
         public Quest (string questId, string meta)
         {
+            this.safeName = string.Format("{0}{1}", questId.Substring(questId.Length-5), meta);
+
             Stream questData = LoadFileAndInitializeData(questId, meta);
             DecryptData(questData);
             LocatePointersAndReadBody();
@@ -48,6 +51,8 @@ namespace MHFQuestEditor
 
         void LocatePointersAndReadBody ()
         {
+            if (decryptedData == null) return;
+
             int mainPropsPointer = decryptedData.ReadByte();
             decryptedData.Seek(mainPropsPointer, SeekOrigin.Begin);
             decryptedData.Seek(40, SeekOrigin.Current);
@@ -63,6 +68,8 @@ namespace MHFQuestEditor
 
         void ReadQuestStrings ()
         {
+            if (decryptedData == null) return;
+
             byte[] titlePointer = new byte[4];
             decryptedData.Read(titlePointer, 0, 4);
             byte[] mainObjectivePointer = new byte[4];

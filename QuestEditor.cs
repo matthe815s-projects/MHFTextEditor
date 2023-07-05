@@ -6,7 +6,6 @@ namespace MHFQuestEditor
 {
     public partial class QuestSelector : Form
     {
-        string fileName = "";
         List<Quest> files = new List<Quest>();
 
         public QuestSelector()
@@ -23,17 +22,6 @@ namespace MHFQuestEditor
             openFileDialog1.InitialDirectory = "./";
             DialogResult result = openFileDialog1.ShowDialog();
             processDialog(result);
-        }
-
-        private void FillQuestList ()
-        {
-            string[] files = Directory.GetFiles("./");
-
-            foreach (string file in files)
-            {
-                if (!file.EndsWith(".bin")) continue;
-                treeView1.Nodes.Add(file);
-            }
         }
 
         private void processDialog (DialogResult result)
@@ -90,7 +78,7 @@ namespace MHFQuestEditor
         {
             files.ForEach(quest =>
             {
-                BinaryWriter writer = new BinaryWriter(File.Open(quest.fileName + ".backup", FileMode.Create), Encoding.GetEncoding(932));
+                BinaryWriter writer = new BinaryWriter(File.Open(string.Format("./{0}/{1}.bin.uncompressed.backup", BinUtils.backupDirectory, quest.safeName), FileMode.Create), Encoding.GetEncoding(932));
 
                 writer.Write(quest.questCode);
 
@@ -159,13 +147,18 @@ namespace MHFQuestEditor
 
         private void QuestSelector_Load(object sender, EventArgs e)
         {
-            FillQuestList();
+            string[] bins = BinUtils.CheckForBins();
+
+            foreach (string bin in bins)
+            {
+                treeView1.Nodes.Add(bin);
+            }
         }
 
         private void treeView1_Click(object sender, EventArgs e)
         {
             TreeViewHitTestInfo info = treeView1.HitTest(treeView1.PointToClient(Cursor.Position));
-            if (info != null)
+            if (info != null && info.Node != null)
                 loadQuest(info.Node.Text.Substring(2));
         }
 
