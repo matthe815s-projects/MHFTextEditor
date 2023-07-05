@@ -166,5 +166,15 @@ namespace MHFQuestEditor
             if (info != null)
                 loadQuest(info.Node.Text.Substring(2));
         }
+
+        private void textBox8_KeyPress(object sender, KeyEventArgs e)
+        {
+            int lineCount = textBox8.Lines.Length;
+            int currentLine = textBox8.GetLineFromCharIndex(textBox8.SelectionStart);
+            int charCount = textBox8.Lines[currentLine].Length;
+
+            label12.Text = string.Format("{0}/{1}", charCount.ToString(), 25);
+            label11.Text = string.Format("{0}/{1}", lineCount.ToString(), 7);
+        }
     }
 }

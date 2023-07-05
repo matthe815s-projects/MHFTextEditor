@@ -51,6 +51,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.treeView1 = new System.Windows.Forms.TreeView();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,6 +137,7 @@
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(384, 126);
             this.textBox8.TabIndex = 9;
+            this.textBox8.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox8_KeyPress);
             // 
             // button2
             // 
@@ -240,11 +243,31 @@
             this.treeView1.TabIndex = 21;
             this.treeView1.DoubleClick += new System.EventHandler(this.treeView1_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(501, 444);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(24, 15);
+            this.label11.TabIndex = 22;
+            this.label11.Text = "1/7";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(501, 429);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(30, 15);
+            this.label12.TabIndex = 23;
+            this.label12.Text = "0/15";
+            // 
             // QuestSelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(828, 542);
+            this.Controls.Add(this.label12);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -300,5 +323,7 @@
         private Label label10;
         private FileSystemWatcher fileSystemWatcher1;
         private TreeView treeView1;
+        private Label label11;
+        private Label label12;
     }
 }
