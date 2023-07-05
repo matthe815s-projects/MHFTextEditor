@@ -51,7 +51,6 @@ namespace MHFQuestEditor
             files = new List<Quest>();
             fileName = fileName.Substring(0, fileName.Length - 6);
 
-
             MessageBox.Show(String.Format("{0} loaded successfully!", fileName));
 
             LoadIfExists(fileName, "d0");
@@ -63,6 +62,7 @@ namespace MHFQuestEditor
 
             if (fileName.Length > 5) fileName = fileName.Substring(fileName.Length - 5);
             label2.Text = "Quest ID: " + fileName;
+            this.Text = string.Format("Editing: {0}", fileName);
 
             Quest displayQuest = files[0];
 
