@@ -3,7 +3,7 @@ using MHFQuestEditor.Utils;
 
 namespace MHFQuestEditor
 {
-    class Quest
+    public class Quest
     {
         public string fileName = "";
 

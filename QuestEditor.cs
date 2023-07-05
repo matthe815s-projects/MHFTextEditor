@@ -179,7 +179,15 @@ namespace MHFQuestEditor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            new Preview().Show();
+            files[0].title = textBox1.Text;
+            files[0].mainObjective = textBox2.Text;
+            files[0].subObjective1 = textBox3.Text;
+            files[0].subObjective2 = textBox4.Text;
+            files[0].clearConditions = textBox5.Text;
+            files[0].failureConditions = textBox6.Text;
+            files[0].questContractor = textBox7.Text;
+            files[0].questDescription = textBox8.Text;
+            new Preview(files[0]).Show();
         }
     }
 }
