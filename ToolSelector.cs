@@ -12,9 +12,16 @@ namespace MHFQuestEditor
 {
     public partial class ToolSelector : Form
     {
+        QuestSelector form;
+
         public ToolSelector()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Program.OpenQuestEditor();
         }
     }
 }
